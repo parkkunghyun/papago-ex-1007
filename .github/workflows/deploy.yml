@@ -22,7 +22,7 @@ jobs:
       run: npm install
 
     - name: Build Docker image
-      run: docker build -t gcr.io/as-rudgus4620/translate-app .
+      run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app .
 
     - name: Log in to Google Cloud
       uses: google-github-actions/setup-gcloud@v0
@@ -31,11 +31,11 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}  # GCP 프로젝트 ID
 
     - name: Push Docker image
-      run: docker push gcr.io/$GCP_PROJECT_ID/nextjs-app
+      run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app
 
     - name: Deploy to Cloud Run
       run: gcloud run deploy nextjs-app \
-          --image gcr.io/$GCP_PROJECT_ID/nextjs-app \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app \
           --platform managed \
           --region us-central1 \  # 원하는 리전으로 변경
           --allow-unauthenticated
