@@ -1,0 +1,41 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시할 때마다 실행
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'  # Node.js 버전 설정
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Docker image
+      run: docker build -t gcr.io/as-rudgus4620/translate-app .
+
+    - name: Log in to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}  # GCP 서비스 계정 키
+        project_id: ${{ secrets.GCP_PROJECT_ID }}  # GCP 프로젝트 ID
+
+    - name: Push Docker image
+      run: docker push gcr.io/$GCP_PROJECT_ID/nextjs-app
+
+    - name: Deploy to Cloud Run
+      run: gcloud run deploy nextjs-app \
+          --image gcr.io/$GCP_PROJECT_ID/nextjs-app \
+          --platform managed \
+          --region us-central1 \  # 원하는 리전으로 변경
+          --allow-unauthenticated
