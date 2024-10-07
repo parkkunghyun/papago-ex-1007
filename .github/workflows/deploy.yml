@@ -37,5 +37,5 @@ jobs:
       run: gcloud run deploy nextjs-app \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app \
           --platform managed \
-          --region us-central1 \  # 원하는 리전으로 변경
-          --allow-unauthenticated
+          --region us-central1 \
+          --allow-unauthenticated  # 마지막 플래그 뒤의 불필요한 공백 제거
